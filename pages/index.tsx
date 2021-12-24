@@ -64,7 +64,7 @@ export default function Home() {
           nextLetters == "unknown"
             ?
           <>
-            <div className="mt-4">There aren't any words that match this combination</div>
+            <div className="mt-4">There are no words that match this combination</div>
             <Image
               src="/Lewin.JPG"
               width="450"

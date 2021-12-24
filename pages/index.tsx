@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import LetterRow from '../components/LetterRow'
 import { useEffect, useState } from 'react'
@@ -59,17 +60,32 @@ export default function Home() {
           />
         ))}
 
-        <div className="my-4">Type these letters in then click on the letters to change the colours</div>
-        <div className="my-4">This is the next set of letters</div>
-        {loading || nextLetters === null ? (
-          <div>loading</div>
-        ) : (
-          <LetterRow
-            onChange={handleRowChange}
-            initialLetters={Array.from(nextLetters)}
-            initialColors={[...Array(5)].map(() => "gray")}
-          />
-        )}
+        {
+          nextLetters == "unknown"
+            ?
+          <>
+            <div className="mt-4">There aren't any words that match this combination</div>
+            <Image
+              src="/Lewin.JPG"
+              width="450"
+              height="300"
+            />
+          </>
+          :
+          <>
+            <div className="my-4">Type these letters in then click on the letters to change the colours</div>
+            <div className="my-4">This is the next set of letters</div>
+            {loading || nextLetters === null ? (
+              <div>loading</div>
+            ) : (
+              <LetterRow
+                onChange={handleRowChange}
+                initialLetters={Array.from(nextLetters)}
+                initialColors={[...Array(5)].map(() => "gray")}
+              />
+            )}
+          </>
+        }
       </main>
 
 

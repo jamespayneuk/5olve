@@ -1,69 +1,60 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {words as allWords, words} from "../../assets/words";
+import { evaluate } from "../../assets/eval";
+import {words as allWords} from "../../assets/words";
 
-type Color = "green" | "yellow" | "gray";
-interface Entry {letter: string, color: Color}
+export type Color = "green" | "yellow" | "gray";
+export interface Entry {letter: string, color: Color}
+export type Word = Entry[]
 interface Request {
   words: Entry[][]
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const scores = words.map((aim, i) => {
-    console.log(i,"/",words.length)
-    const attempts: Entry[][] = [];
-    while (true) {
-      const possibleWords = removeWords(allWords, attempts);
-      const freq = getFrequencies(possibleWords);
-      const word = getBestWord(possibleWords, freq);
-      if (word === aim) {
-        break;
-      }
-      attempts.push(score(aim, word));
-    }
-    return attempts.length + 1;
+  const data: Request = JSON.parse(req.body);
+  const word = getBetterWord(allWords, data.words);
+  res.status(200).json({word});
+}
+
+export function getBetterWord(dictionary: string[], guesses: Word[]): string {
+  const possibleWords = removeWords(dictionary, guesses);
+  if (possibleWords.length === 1) {
+    return possibleWords[0]
+  }
+  const newGuesses = removeGuessedLetters(dictionary, guesses);
+  if (newGuesses.length === 0) {
+    const frequencies = getFrequencies(possibleWords);
+    const word = getHighestValueWord(possibleWords, frequencies);
+    return word;
+  }
+  const frequencies = getFrequencies(newGuesses);
+  const word = getHighestValueWord(newGuesses, frequencies);
+  return word;
+}
+
+function removeGuessedLetters(dictionary: string[], words: Word[]) {
+  let newDictionary = [...dictionary];
+  words.forEach((word) => {
+    word.forEach((letter) => {
+      newDictionary = newDictionary.filter(dictEntry => {
+        return !dictEntry.includes(letter.letter)
+      })
+
+    })
   })
-  // const sum = scores.reduce((a, b) => a + b, 0);
-  // const avg = (sum / scores.length) || 0;
-  res.json(scores);
+  return newDictionary;
+}
 
+function removeAlreadyGuessedLettersFromFrequencies(freq: {[k: string]: number}, guesses: Word[]) {
+  const newFreq = {...freq};
 
-
-
-
-  // if (!Array.isArray(req.body.words)) {
-  //   res.status(400).json({ ok: false })
-  //   return;
-  // }
-  // fancy
-  // const data: Request = {
-  //   words: [
-  //     [
-  //       {letter: "a", color: "yellow"},
-  //       {letter: "r", color: "gray"},
-  //       {letter: "o", color: "gray"},
-  //       {letter: "s", color: "gray"},
-  //       {letter: "e", color: "gray"},
-  //     ],
-  //     [
-  //       {letter: "i", color: "gray"},
-  //       {letter: "n", color: "yellow"},
-  //       {letter: "l", color: "gray"},
-  //       {letter: "a", color: "yellow"},
-  //       {letter: "y", color: "green"},
-  //     ],
-  //     [
-  //       {letter: "c", color: "yellow"},
-  //       {letter: "a", color: "green"},
-  //       {letter: "n", color: "green"},
-  //       {letter: "d", color: "gray"},
-  //       {letter: "y", color: "green"},
-  //     ]
-  //   ]
-  // }
-
-  // const possibleWords = removeWords(allWords, data.words);
-  // const freq = getFrequencies(possibleWords);
-  // res.status(200).json({word: getBestWord(possibleWords, freq)});
+  guesses.forEach(word => {
+    word.forEach(letter => {
+      if (letter.color === "green" || letter.color === "yellow") {
+        delete newFreq[letter.letter];
+      }
+    })
+  })
+  return newFreq
 }
 
 function getFrequencies(words: string[]): {[k: string]: number} {
@@ -78,6 +69,7 @@ function getFrequencies(words: string[]): {[k: string]: number} {
     return p;
   }, {})
 }
+
 
 function removeWords(dictionary: string[], words: Entry[][]): string[] {
   let newDictionary = [...dictionary];
@@ -101,24 +93,16 @@ function removeWords(dictionary: string[], words: Entry[][]): string[] {
   return newDictionary;
 }
 
-function getBestWord(dictionary: string[], frequencies: {[k: string]: number}): string {
+function getHighestValueWord(dictionary: string[], letterScores: {[k: string]: number}): string {
   const wordScores = dictionary.map(word => [
     word, 
-    Array.from(new Set(word)).reduce((p,c) => p + frequencies[c] ?? 0, 0)
+    Array.from(new Set(word)).reduce((p,c) => p + (letterScores[c] ?? 0), 0)
   ]);
   return wordScores.reduce((p, c) => c[1] > p[1] ? c : p, ["unknown", 0])[0] as string;
 }
 
-function score(aim: string, chosen: string): Entry[] {
-  const entry: Entry[] = [];
-  Array.from(chosen).forEach((letter, index) => {
-    if (aim[index] === letter) {
-      entry.push({letter, color: "green"})
-    } else if (aim.includes(letter)) {
-      entry.push({letter, color: "yellow"})
-    } else {
-      entry.push({letter, color: "gray"})
-    }
-  })
-  return entry;
+function getBestWord(dictionary: string[], guesses: Entry[][]): string {
+  const possibleWords = removeWords(dictionary, guesses);
+  const frequencies = getFrequencies(possibleWords);
+  return getHighestValueWord(possibleWords, frequencies);
 }

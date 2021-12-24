@@ -5,7 +5,7 @@ import {words as allWords} from "../../assets/words";
 export type Color = "green" | "yellow" | "gray";
 export interface Entry {letter: string, color: Color}
 export type Word = Entry[]
-interface Request {
+export interface Request {
   words: Entry[][]
 }
 
@@ -14,6 +14,31 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const word = getBetterWord(allWords, data.words);
   res.status(200).json({word});
 }
+
+export function getBestestWord(dictionary: string[], guesses: Word[]): string {
+  const possibleWords = removeWords(dictionary, guesses);
+  /*
+    Within possible words there are letters that I need to get more information about
+
+    those letters I need to get more information about are the most frequent letters within the possible words, excluding the letters I've got green on
+    I'm not sure what I need to do with yellow, I have some info and learning where that is might be more valuable, but also getting more information about the other letters might be more helpful
+    I think yellow will be resolved by being able to switch on and off ignoreing yellow, and seeing which evaluates better
+
+    I need to maximise the information gained about those letters.
+    This is done by:
+    Look at the entire dictionary, pick the word which gives the most information about the highest frequency letters.
+    'Most information' means words with highest sum of letter frequencies
+    I could exclude words matching green words? but think not needed.
+
+    There reaches a point where I have enough information that it becomes more efficient to start guessing words
+    This point is determined by factors:
+      number of possible words remaining
+  */
+  return "";
+}
+
+
+//
 
 export function getBetterWord(dictionary: string[], guesses: Word[]): string {
   const possibleWords = removeWords(dictionary, guesses);
@@ -31,7 +56,7 @@ export function getBetterWord(dictionary: string[], guesses: Word[]): string {
   return word;
 }
 
-function removeGuessedLetters(dictionary: string[], words: Word[]) {
+export function removeGuessedLetters(dictionary: string[], words: Word[]) {
   let newDictionary = [...dictionary];
   words.forEach((word) => {
     word.forEach((letter) => {
@@ -44,7 +69,7 @@ function removeGuessedLetters(dictionary: string[], words: Word[]) {
   return newDictionary;
 }
 
-function removeAlreadyGuessedLettersFromFrequencies(freq: {[k: string]: number}, guesses: Word[]) {
+export function removeAlreadyGuessedLettersFromFrequencies(freq: {[k: string]: number}, guesses: Word[]) {
   const newFreq = {...freq};
 
   guesses.forEach(word => {
@@ -57,7 +82,7 @@ function removeAlreadyGuessedLettersFromFrequencies(freq: {[k: string]: number},
   return newFreq
 }
 
-function getFrequencies(words: string[]): {[k: string]: number} {
+export function getFrequencies(words: string[]): {[k: string]: number} {
   return words.reduce((p, word) => {
     Array.from(new Set(word)).forEach(letter => {
       if (letter in p) {
@@ -70,8 +95,7 @@ function getFrequencies(words: string[]): {[k: string]: number} {
   }, {})
 }
 
-
-function removeWords(dictionary: string[], words: Entry[][]): string[] {
+export function removeWords(dictionary: string[], words: Entry[][]): string[] {
   let newDictionary = [...dictionary];
   words.forEach((word) => {
     word.forEach((letter, index) => {
@@ -93,15 +117,15 @@ function removeWords(dictionary: string[], words: Entry[][]): string[] {
   return newDictionary;
 }
 
-function getHighestValueWord(dictionary: string[], letterScores: {[k: string]: number}): string {
+export function getHighestValueWord(dictionary: string[], letterScores: {[k: string]: number}): string {
   const wordScores = dictionary.map(word => [
-    word, 
+    word,
     Array.from(new Set(word)).reduce((p,c) => p + (letterScores[c] ?? 0), 0)
   ]);
   return wordScores.reduce((p, c) => c[1] > p[1] ? c : p, ["unknown", 0])[0] as string;
 }
 
-function getBestWord(dictionary: string[], guesses: Entry[][]): string {
+export function getBestWord(dictionary: string[], guesses: Entry[][]): string {
   const possibleWords = removeWords(dictionary, guesses);
   const frequencies = getFrequencies(possibleWords);
   return getHighestValueWord(possibleWords, frequencies);

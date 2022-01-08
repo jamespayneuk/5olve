@@ -42,9 +42,14 @@ export function getBetterWord(dictionary: string[], guesses: Word[]): [string, s
   if (possibleWords.length === 1) {
     return [possibleWords[0], possibleWords]
   }
-  const newGuesses = removeGuessedLetters(dictionary, guesses);
+  const newGuesses = removeGuessedLetters(possibleWords, guesses);
   if (newGuesses.length === 0) {
     const frequencies = getFrequencies(possibleWords);
+    const unGuessedLetterFrequencies = removeAlreadyGuessedLettersFromFrequencies(frequencies, guesses)
+    if (Object.keys(unGuessedLetterFrequencies).length > 2) { // this should be based on the number of letters already coloured or possible words remaining
+      const outcastWord = getHighestValueWord(dictionary, unGuessedLetterFrequencies);
+      return [outcastWord, possibleWords];
+    }
     const word = getHighestValueWord(possibleWords, frequencies);
     return [word, possibleWords];
   }

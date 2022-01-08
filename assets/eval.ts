@@ -16,20 +16,27 @@ function score(aim: string, chosen: string): Entry[] {
 
 type getBestWord = (dictionary: string[], guesses: Entry[][]) => [string, string[]]
 
-export function evaluate(dictionary: string[], getBestWord: getBestWord): number[] {
+export function evaluate(dictionary: string[], getBestWord: getBestWord): [number[], any] {
+  const summary = {}
   const scores = dictionary.map((aim, i) => {
     if (i % 100 === 0) {
       console.log(i,"/",dictionary.length);
     }
     const attempts: Entry[][] = [];
     while (true) {
+      const disableFunctionLogging = true
       const [word, remainingGuesses] = getBestWord(dictionary, attempts);
       if (word === aim) {
         break;
       }
-      attempts.push(score(aim, word));
+      const attempt = score(aim, word)
+      attempts.push(attempt);
     }
+    if (!summary[attempts.length + 1]) {
+      summary[attempts.length + 1] = 0
+    }
+    summary[attempts.length + 1]++
     return attempts.length + 1;
   })
-  return scores
+  return [scores, summary]
 }

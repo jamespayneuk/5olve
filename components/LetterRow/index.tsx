@@ -36,7 +36,7 @@ export default function LetterRow(props: Props) {
         <span
           key={i}
           onClick={() => props.onChange && handleColourChange(i)}
-          className={`cursor-pointer select-none border rounded border-gray-500 p-2 w-[35px] inline-block text-center uppercase ${colours[i] == "yellow" && "bg-yellow-400"} ${colours[i] == "green" && "bg-green-500"}`}
+          className={`cursor-pointer select-none border rounded border-gray-500 p-2 min-w-[35px] inline-block text-center uppercase ${colours[i] == "yellow" && "bg-yellow-400"} ${colours[i] == "green" && "bg-green-500"}`}
         >
           {l}
         </span>

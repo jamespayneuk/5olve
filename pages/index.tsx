@@ -80,7 +80,7 @@ export default function Home() {
           </>
           :
             <>
-              {remainingPossibleWords && remainingPossibleWords.length > 1 && <div className="my-4">Type these letters in then click on the letters to change the colours</div>}
+              {remainingPossibleWords && remainingPossibleWords.length > 1 && <div className="mt-16">Type in the letters below then click on the letters to change the colours</div>}
               {remainingPossibleWords && remainingPossibleWords.length > 10 && <div className="mt-4 italic">Possible Words: {remainingPossibleWords.length}</div>}
               {remainingPossibleWords && remainingPossibleWords.length <= 10 && remainingPossibleWords.length > 1 && <div className="mt-4 italic">Possible Words: {remainingPossibleWords. join(",")}</div>}
               {(remainingPossibleWords && remainingPossibleWords.length == 1) ?

@@ -5,6 +5,7 @@ interface Props {
     initialLetters: string[];
     initialColors: Color[];
     onChange?: (letters: string[], colors: string[]) => void;
+    disableArrow?: boolean;
 }
 
 export default function LetterRow(props: Props) {
@@ -35,14 +36,14 @@ export default function LetterRow(props: Props) {
         <span
           key={i}
           onClick={() => props.onChange && handleColourChange(i)}
-          className={`cursor-pointer select-none border rounded border-gray-500 p-2 w-8 uppercase ${colours[i] == "yellow" && "bg-orange-500"} ${colours[i] == "green" && "bg-green-500"}`}
+          className={`cursor-pointer select-none border rounded border-gray-500 p-2 w-[35px] inline-block text-center uppercase ${colours[i] == "yellow" && "bg-yellow-400"} ${colours[i] == "green" && "bg-green-500"}`}
         >
           {l}
         </span>
       )}
-        {props.onChange ? (
+        {props.onChange && !props.disableArrow ? (
           <div
-            className="w-10 cursor-pointer inline ml-2 p-2 rounded bg-blue-500"
+            className="inline w-10 p-2 ml-2 bg-blue-500 rounded cursor-pointer"
             onClick={handleSubmit}
           >
             {'>'}

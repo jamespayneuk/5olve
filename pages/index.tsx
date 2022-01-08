@@ -74,21 +74,41 @@ export default function Home() {
             />
           </>
           :
-          <>
-            <div className="my-4">Type these letters in then click on the letters to change the colours</div>
-            {remainingPossibleWords && remainingPossibleWords.length > 10 && <div className="mt-4 italic">Possible Words: {remainingPossibleWords.length}</div>}
-            {remainingPossibleWords && remainingPossibleWords.length <= 10 && <div className="mt-4 italic">Possible Words: {remainingPossibleWords. join(",")}</div>}
-            <div className="mb-4">This is the next set of letters</div>
-            {loading || nextLetters === null ? (
-              <div>loading</div>
-            ) : (
-              <LetterRow
-                onChange={handleRowChange}
-                initialLetters={Array.from(nextLetters)}
-                initialColors={[...Array(5)].map(() => "gray")}
-              />
-            )}
-          </>
+            <>
+              {remainingPossibleWords && remainingPossibleWords > 1 && <div className="my-4">Type these letters in then click on the letters to change the colours</div>}
+              {remainingPossibleWords && remainingPossibleWords.length > 10 && <div className="mt-4 italic">Possible Words: {remainingPossibleWords.length}</div>}
+              {remainingPossibleWords && remainingPossibleWords.length <= 10 && remainingPossibleWords.length > 1 && <div className="mt-4 italic">Possible Words: {remainingPossibleWords. join(",")}</div>}
+              {(remainingPossibleWords && remainingPossibleWords.length == 1) ?
+                <>
+                  <div className="mt-4">The word IS:</div>
+                  {loading || nextLetters === null ? (
+                    <div>loading</div>
+                  ) : (
+                    <LetterRow
+                      onChange={handleRowChange}
+                      initialLetters={Array.from(nextLetters)}
+                      initialColors={[...Array(5)].map(() => "gray")}
+                      disableArrow={true}
+                    />
+                  )}
+                </>
+                :
+                <>
+                  <div className="mb-4">This is the next set of letters</div>
+                  {loading || nextLetters === null ? (
+                    <div>loading</div>
+                  ) : (
+                    <LetterRow
+                      onChange={handleRowChange}
+                      initialLetters={Array.from(nextLetters)}
+                      initialColors={[...Array(5)].map(() => "gray")}
+                      disableArrow={false}
+                    />
+                  )}
+                </>
+              }
+
+            </>
         }
       </main>
 

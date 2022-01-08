@@ -11,12 +11,12 @@ export interface Request {
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const data: Request = JSON.parse(req.body);
-  const word = getBetterWord(allWords, data.words);
-  res.status(200).json({word});
+  const [word, remainingWords] = getBetterWord(allWords, data.words);
+  res.status(200).json({word, remainingWords});
 }
 
 export function getBestestWord(dictionary: string[], guesses: Word[]): string {
-  const possibleWords = removeWords(dictionary, guesses);
+  const possibleWords = filterDictionaryToRemoveImpossibleWords(dictionary, guesses);
   /*
     Within possible words there are letters that I need to get more information about
 
@@ -37,28 +37,25 @@ export function getBestestWord(dictionary: string[], guesses: Word[]): string {
   return "";
 }
 
-
-//
-
-export function getBetterWord(dictionary: string[], guesses: Word[]): string {
-  const possibleWords = removeWords(dictionary, guesses);
+export function getBetterWord(dictionary: string[], guesses: Word[]): [string, string[]] {
+  const possibleWords = filterDictionaryToRemoveImpossibleWords(dictionary, guesses);
   if (possibleWords.length === 1) {
-    return possibleWords[0]
+    return [possibleWords[0], possibleWords]
   }
   const newGuesses = removeGuessedLetters(dictionary, guesses);
   if (newGuesses.length === 0) {
     const frequencies = getFrequencies(possibleWords);
     const word = getHighestValueWord(possibleWords, frequencies);
-    return word;
+    return [word, possibleWords];
   }
   const frequencies = getFrequencies(newGuesses);
   const word = getHighestValueWord(newGuesses, frequencies);
-  return word;
+  return [word, possibleWords];
 }
 
-export function removeGuessedLetters(dictionary: string[], words: Word[]) {
+export function removeGuessedLetters(dictionary: string[], previousGuesses: Word[]) {
   let newDictionary = [...dictionary];
-  words.forEach((word) => {
+  previousGuesses.forEach((word) => {
     word.forEach((letter) => {
       newDictionary = newDictionary.filter(dictEntry => {
         return !dictEntry.includes(letter.letter)
@@ -95,9 +92,9 @@ export function getFrequencies(words: string[]): {[k: string]: number} {
   }, {})
 }
 
-export function removeWords(dictionary: string[], words: Entry[][]): string[] {
+export function filterDictionaryToRemoveImpossibleWords(dictionary: string[], previousGuesses: Entry[][]): string[] {
   let newDictionary = [...dictionary];
-  words.forEach((word) => {
+  previousGuesses.forEach((word) => {
     word.forEach((letter, index) => {
       newDictionary = newDictionary.filter(dictEntry => {
         if (letter.color === "green") {
@@ -126,7 +123,7 @@ export function getHighestValueWord(dictionary: string[], letterScores: {[k: str
 }
 
 export function getBestWord(dictionary: string[], guesses: Entry[][]): string {
-  const possibleWords = removeWords(dictionary, guesses);
+  const possibleWords = filterDictionaryToRemoveImpossibleWords(dictionary, guesses);
   const frequencies = getFrequencies(possibleWords);
   return getHighestValueWord(possibleWords, frequencies);
 }

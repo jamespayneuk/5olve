@@ -76,9 +76,9 @@ export default function Home() {
           :
           <>
             <div className="my-4">Type these letters in then click on the letters to change the colours</div>
-            <div className="mt-4">This is the next set of letters</div>
-            {remainingPossibleWords && remainingPossibleWords.length > 10 && <div className="mb-4 italic">Possible Words: {remainingPossibleWords.length}</div>}
-            {remainingPossibleWords && remainingPossibleWords.length <= 10 && <div className="mb-4 italic">Possible Words: {remainingPossibleWords. join(",")}</div>}
+            {remainingPossibleWords && remainingPossibleWords.length > 10 && <div className="mt-4 italic">Possible Words: {remainingPossibleWords.length}</div>}
+            {remainingPossibleWords && remainingPossibleWords.length <= 10 && <div className="mt-4 italic">Possible Words: {remainingPossibleWords. join(",")}</div>}
+            <div className="mb-4">This is the next set of letters</div>
             {loading || nextLetters === null ? (
               <div>loading</div>
             ) : (

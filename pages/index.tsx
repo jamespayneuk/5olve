@@ -76,7 +76,6 @@ export default function Home() {
               src="/Lewin.JPG"
               width="450"
               height="300"
-              alt="No words"
             />
           </>
           :

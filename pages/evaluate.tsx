@@ -83,7 +83,7 @@ export default function Home() {
                       runningTotal+=summary[key]
                       const cumulative = (100*(runningTotal / totalWords)).toFixed(2)
                       return (
-                        <tr className={parseInt(key)<=6 ? "bg-green-200" : "bg-red-200"}>
+                        <tr key={index} className={parseInt(key)<=6 ? "bg-green-200" : "bg-red-200"}>
                           <td className="px-2 py-1">{key}</td>
                           <td className="px-2 py-1">{summary[key]}</td>
                           <td className="px-2 py-1">{cumulative}%</td>

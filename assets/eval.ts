@@ -14,9 +14,9 @@ function score(aim: string, chosen: string): Entry[] {
   return entry;
 }
 
-type getBestWord = (dictionary: string[], guesses: Entry[][]) => [string, string[]]
+type wordFindingFunction = (dictionary: string[], guesses: Entry[][]) => [string, string[]]
 
-export function evaluate(dictionary: string[], getBestWord: getBestWord): [number[], any] {
+export function evaluate(dictionary: string[], wordFindingFunction: wordFindingFunction): [number[], any] {
   const summary = {}
   const scores = dictionary.map((aim, i) => {
     if (i % 100 === 0) {
@@ -25,7 +25,7 @@ export function evaluate(dictionary: string[], getBestWord: getBestWord): [numbe
     const attempts: Entry[][] = [];
     while (true) {
       const disableFunctionLogging = true
-      const [word, remainingGuesses] = getBestWord(dictionary, attempts);
+      const [word, remainingGuesses] = wordFindingFunction(dictionary, attempts);
       if (word === aim) {
         break;
       }

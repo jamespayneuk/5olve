@@ -52,7 +52,7 @@ export default function Home() {
       <main className={styles.main}>
         <h1 className={styles.title}>
           <LetterRow
-            onChange={handleRowChange}
+            onChange={() => {}}
             initialLetters={Array.from("5olve")}
             initialColors={["yellow", "green", "green", "green", "green"]}
             disableArrow={true}

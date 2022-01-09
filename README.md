@@ -6,4 +6,4 @@
 
 # Notes
 Solving logic in `api/word.ts`
-Make your own `getNextBestWord` function in `api/word.ts` and go to /api/evaluate to get the results (probably takes a couple of minutes to run)
+Make your own `getNextBestWord` function in `api/word.ts` and go to /evaluate to get the results

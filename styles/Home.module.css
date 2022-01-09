@@ -108,6 +108,15 @@
   margin-left: 0.5rem;
 }
 
+.button {
+  background-color: rgb(100, 149, 237);
+  padding: 7px 15px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  cursor: pointer;
+  color: white;
+}
+
 @media (max-width: 600px) {
   .grid {
     width: 100%;

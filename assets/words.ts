@@ -4858,7 +4858,6 @@ export const words = [
 "fondu",
 "coney",
 "polis",
-"dictu",
 "kraal",
 "sherd",
 "mumbo",
